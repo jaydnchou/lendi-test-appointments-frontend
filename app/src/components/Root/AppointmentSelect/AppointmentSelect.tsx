@@ -1,19 +1,21 @@
 import axios from "axios";
+import React, { useEffect, useState } from "react";
 import styled from "styled-components";
 
+import AppointmentDetails from "./AppointmentDetails";
 import Broker from "./Broker";
 
 const Wrapper = styled.div`
   display: flex;
+  gap: 24px;
+  height: 100%;
 `;
 
-const SideBar = styled.div`
-  width: 250px;
-`;
-
-const Heading = styled.strong.attrs({ role: "heading", level: 2 })`
-  display: block;
-  font-size: 20px;
+const BrokerContainer = styled.ul`
+  list-style-type: none;
+  padding: 0;
+  margin: 0;
+  width: 60%;
 `;
 
 type BrokerAppointments = {
@@ -23,28 +25,43 @@ type BrokerAppointments = {
 }[];
 
 const AppointmentSelect = () => {
-  axios
-    .get("http://localhost:8080/brokers")
-    .then(({ data }) => console.log(data));
-  axios
-    .get("http://localhost:8080/appointments")
-    .then(({ data }) => console.log(data));
+  const [brokers, setBrokers] = useState([]);
+  const [appointments, setAppointments] = useState([]);
+
+  useEffect(() => {
+    const fetchBrokers = async () => {
+      const res = await axios.get("http://localhost:8080/brokers");
+      setBrokers(res.data);
+    };
+
+    const fetchAppointments = async () => {
+      const app = await axios.get("http://localhost:8080/appointments");
+      setAppointments(app.data);
+    };
+
+    fetchBrokers();
+    fetchAppointments();
+  }, []);
+
+  const brokerAppointments: BrokerAppointments = brokers.map(({ id, name }) => ({
+    id,
+    name,
+    appointments: appointments.filter((appointment) => {
+      const { brokerId } = appointment;
+      if (id === brokerId) {
+        return appointment;
+      }
+    }),
+  }));
 
   return (
     <Wrapper>
-      <SideBar>
-        <Heading>Amazing site</Heading>
-        TODO: populate brokers
-        <ul>
-          {/* {brokerAppointments.map((broker) => (
-            <Broker key={broker.id} broker={broker} />
-          ))} */}
-        </ul>
-      </SideBar>
-      <div>
-        <Heading>Appointment details</Heading>
-        TODO: get appointment details when clicking on one from the left side
-      </div>
+      <BrokerContainer>
+        {brokerAppointments.map((broker) => (
+          <Broker key={broker.id} broker={broker} />
+        ))}
+      </BrokerContainer>
+      <AppointmentDetails />
     </Wrapper>
   );
 };

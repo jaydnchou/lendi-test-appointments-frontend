@@ -3,25 +3,29 @@ import styled from "styled-components";
 
 import Navigation from "./Navigation";
 import AppointmentSelect from "./AppointmentSelect";
+import { AppointmentProvider } from "./AppointmentProvider";
 
 const Wrapper = styled.div`
+  display: flex;
+  font-family: "Raleway", sans-serif;
+  flex-direction: column;
+  height: 100vh;
+  width: 100vw;
+`;
+
+const Content = styled.main`
+  display: flex;
+  flex-direction: column;
+  box-sizing: border-box;
   background-color: #fcfcfc;
-  height: 100%;
+  flex-grow: 1;
+  padding: 24px;
   width: 100%;
 `;
 
-const Content = styled.div`
-  margin: 0 auto;
-  padding: 24px;
-  width: 720px;
-  box-shadow: 1px 1px 4px #d3d3d3;
-  background-color: white;
-  border-radius: 5px;
-`;
-
-const Heading = styled.strong.attrs({ role: "heading", level: 1 })`
+const Heading = styled.h1`
   display: block;
-  font-size: 36px;
+  font-size: 32px;
   margin-bottom: 40px;
   margin-top: 20px;
 `;
@@ -29,11 +33,13 @@ const Heading = styled.strong.attrs({ role: "heading", level: 1 })`
 const Root = () => {
   return (
     <Wrapper>
-      <Navigation />
-      <Content>
-        <Heading>Amazing site</Heading>
-        <AppointmentSelect />
-      </Content>
+      <AppointmentProvider>
+        <Navigation />
+        <Content>
+          <Heading>Broker appointments</Heading>
+          <AppointmentSelect />
+        </Content>
+      </AppointmentProvider>
     </Wrapper>
   );
 };
